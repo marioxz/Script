@@ -1,5 +1,5 @@
 #!/bin/bash
-# Read old hostname & IP
+# Script ini untuk setup DNS static server ubuntu
 
 hostname=$( cat /etc/hostname)
 IP_hostname="$(getent hosts $hostname)"
@@ -36,17 +36,10 @@ esac
 ##############################
 # script ini untuk ubah file named.conf.local
 
-# awal
-#echo "Domain : "
-#read domain
-
-#echo "IP domain : "
-#read IP
-
 # Path file 
 dir="/etc/bind/named.conf.local"
 
-# clear
+# hapus baris yang tidak diawali //
 sudo sed -i '/\/\//!d' ${dir}
 
 # write to file
@@ -56,6 +49,11 @@ echo "	file \"forward\";" >> ${dir}
 echo "};\n" >> ${dir}
 
 # REVERSE
+# Jika pada reverse menggunakan 1 segmen -> uncomment IP_seg1
+# Jika pada reverse menggunakan 2 segmen -> uncomment IP_seg1 dan IP_seg2
+# Jika pada reverse menggunakan 3 segmen -> uncomment IP_seg1, IP_seg2 dan IP_seg3
+# ket : uncomment -> hapus tanda pagar di depan variabel tersebut
+
 # split IP by delimiter '.'
 IP_seg1=$(echo "$IP" | cut -d "." -f 1)
 #IP_seg2=$(echo "$IP" | cut -d "." -f 2)
@@ -74,7 +72,6 @@ echo "zone	\"$IP_cut.in-addr.arpa\"	{" >> ${dir}
 echo "	type master;" >> ${dir}
 echo "	file \"reverse\";" >> ${dir}
 echo "};" >> ${dir}
-
 
 ###############################
 
@@ -110,8 +107,39 @@ IP_seg2=$(echo "$IP" | cut -d "." -f 2)
 IP_seg3=$(echo "$IP" | cut -d "." -f 3)
 IP_seg4=$(echo "$IP" | cut -d "." -f 4)
 
-# jika di file named.conf.local pada bagian reverse menggunakan 1 segmen 
+# PERHATIKAN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# jika di file named.conf.local pada bagian REVERSE menggunakan 1 segmen 
 # maka pada file reverse akan menggunakan 3 segmen
+# jika di file named.conf.local pada bagian REVERSE menggunakan 2 segmen 
+# maka pada file reverse akan menggunakan 2 segmen
+# jika di file named.conf.local pada bagian REVERSE menggunakan 3 segmen 
+# maka pada file reverse akan menggunakan 1 segmen
+# Untuk penerapannya silahkan hapus tanda pagar di bagian depan variabel combine di bawah ini 
+# sesuai dengan segmen yang digunakan
+
+# contoh : di file named.conf.local pada bagian rever menggunakan 1 segmen
+# IP : server = 192.168.2.1
+#
+# /etc/bind/named.conf.local
+# zone    "192.in-addr.arpa"      {
+#        type master;
+#        file "reverse";
+# };
+# 
+# maka setup yang diperlukan: 
+# uncomment ==> combine="$IP_seg4.$IP_seg3.$IP_seg2"
+# combine yang lainnya di comment saja
+# =======================================================
+# JIKA MENGGUNAKAN 2 SEGMEN
+# zone    "168.192.in-addr.arpa"      {
+#        type master;
+#        file "reverse";
+# };
+# 
+# maka setup yang diperlukan: 
+# uncomment ==> combine="$IP_seg4.$IP_seg3"
+# combine yang lainnya di comment saja
+
 # gabung string
 combine="$IP_seg4.$IP_seg3.$IP_seg2"   	# jika menggunakan 3 segmen
 #combine="$IP_seg4.$IP_seg3"            # jika menggunakan 2 segmen
@@ -125,6 +153,7 @@ sudo sed -i '/^mail/d' ${dir_reverse}
 sudo sed -i '/^@\tIN\tA/d' ${dir_reverse}
 sudo echo -e "$IP_cut\tIN\tPTR\t$domain" >> ${dir_reverse}
 
+# ask to reboot
 echo "Need reboot!!"
 read  -p "Reboot now??? (y/n)" answer
 case "${answer}" in
