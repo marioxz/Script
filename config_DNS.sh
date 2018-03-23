@@ -152,6 +152,7 @@ sudo sed -i '/^ftp/d' ${dir_reverse}
 sudo sed -i '/^mail/d' ${dir_reverse}
 sudo sed -i '/^@\tIN\tA/d' ${dir_reverse}
 sudo echo -e "$IP_cut\tIN\tPTR\t$domain." >> ${dir_reverse}
+sudo service bind9 restart
 
 # ask to reboot
 echo "Need reboot!!"
