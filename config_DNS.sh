@@ -56,15 +56,15 @@ echo "};\n" >> ${dir}
 
 # split IP by delimiter '.'
 IP_seg1=$(echo "$IP" | cut -d "." -f 1)
-#IP_seg2=$(echo "$IP" | cut -d "." -f 2)
+IP_seg2=$(echo "$IP" | cut -d "." -f 2)
 #IP_seg3=$(echo "$IP" | cut -d "." -f 3)
 #IP_seg4=$(echo "$IP" | cut -d "." -f 4)
 
 # gabung string
 #combine="$IP_seg4.$IP_seg3.$IP_seg2.$IP_seg1"
 #combine="$IP_seg3.$IP_seg2.$IP_seg1"	# jika menggunakan 3 segmen
-#combine="$IP_seg2.$IP_seg1"		# jika menggunakan 2 segmen
-combine="$IP_seg1"			# jika menggunakan 1 segmen
+combine="$IP_seg2.$IP_seg1"		# jika menggunakan 2 segmen
+#combine="$IP_seg1"			# jika menggunakan 1 segmen
 IP_cut=$combine
 
 # write to file
@@ -141,8 +141,8 @@ IP_seg4=$(echo "$IP" | cut -d "." -f 4)
 # combine yang lainnya di comment saja
 
 # gabung string
-combine="$IP_seg4.$IP_seg3.$IP_seg2"   	# jika menggunakan 3 segmen
-#combine="$IP_seg4.$IP_seg3"            # jika menggunakan 2 segmen
+#combine="$IP_seg4.$IP_seg3.$IP_seg2"   	# jika menggunakan 3 segmen
+combine="$IP_seg4.$IP_seg3"            # jika menggunakan 2 segmen
 #combine="$IP_seg4"                     # jika menggunakan 1 segmen
 IP_cut=$combine
 
