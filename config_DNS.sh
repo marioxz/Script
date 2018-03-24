@@ -4,8 +4,14 @@
 hostname=$( cat /etc/hostname)
 IP_hostname="$(getent hosts $hostname)"
 domain=""
+newhost=""
+
 # split to IP of hostname. use awk
 IP=$( echo "$IP_hostname" | awk '{print $1}' )
+
+# store
+old_hostname=${hostname}
+old_IP=${IP}
 
 # show IP of hostname
 echo "Existing hostname	: $hostname"
@@ -17,9 +23,8 @@ case "${answer}" in
      [yY][yY][eE][sS]|[yY])
 	echo "New hostaname : "
 	read newhost
-	sudo sed -i "s/$hostname/$newhost/g" /etc/hosts
-	sudo sed -i "s/$hostname/$newhost/g" /etc/hostname
-	domain=${newhost}
+	sudo sed -i "s/$old_hostname/$newhost/g" /etc/hostname
+	hostname=${newhost}
 esac
 
 #ask new IP
@@ -28,10 +33,30 @@ case "${answer}" in
      [yY][yY][eE][sS]|[yY])
 	echo "New IP : "
 	read newIP
-	sudo sed -i "s/$IP/$newIP/g" /etc/hosts
+	#sudo sed -i "s/$IP/$newIP/g" /etc/hosts
 	IP=${newIP}
 esac
 
+#case $newhost in
+#  (*[![:blank:]]*) 
+#  	hostname=${newhost};;
+#esac
+
+# ask new domain
+read -p "Ubah domain (y/n) : " answer
+case "${answer}" in
+     [yY][yY][eE][sS]|[yY])
+	echo "New domain : "
+	read newdomain
+	domain=${newdomain}
+esac
+
+del_num=$(sed -n  "\|${old_IP}\s\+${old_hostname}|=" /etc/hosts)
+#echo $del_num
+sed -i "${del_num}d" /etc/hosts
+sed -i "${del_num}i ${IP}\t${hostname}.${domain}\t${hostname}" /etc/hosts
+
+#sudo sed -i "s/$hostname/$newhost/g" /etc/hosts
 
 ##############################
 # script ini untuk ubah file named.conf.local
