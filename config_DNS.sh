@@ -189,4 +189,4 @@ esac
 
 ####
 # regex multi space
-# [[:space:]]
+# [[:space:]]\+
