@@ -187,3 +187,6 @@ case "${answer}" in
 	sudo reboot
 esac
 
+####
+# regex multi space
+# [[:space:]]
